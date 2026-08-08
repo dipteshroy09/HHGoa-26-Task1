@@ -964,18 +964,23 @@ export default function Home() {
   };
 
   const getShareCaption = () => {
-    if (customShareText !== null) return customShareText;
-    if (mode === "frame") {
-      return `Officially locked in for #HHGoa2026! 🌴\nReady to ship, connect, and catch those Goa sunsets. Here's my frame - see you there!\n#FrameInGoa @HBuilderClub`;
-    }
-    return `Just minted my Builder ID for HH Goa 2026 - ${builderTitle} era activated 🌴\nReady to build and vibe with the community.\n#FrameInGoa @HBuilderClub`;
+    const base = (() => {
+      if (customShareText !== null) return customShareText;
+      if (mode === "frame") {
+        return `Officially locked in for #HHGoa2026! 🌴\nReady to ship, connect, and catch those Goa sunsets. Here's my frame - see you there!\n#FrameInGoa @HBuilderClub`;
+      }
+      return `Just minted my Builder ID for HH Goa 2026 - ${builderTitle} era activated 🌴\nReady to build and vibe with the community.\n#FrameInGoa @HBuilderClub`;
+    })();
+    // Append the hosted image URL so it shows as a preview card on X
+    return shareableUrl ? `${base}\n\n${shareableUrl}` : base;
   };
 
   const handleShareX = async () => {
     setIsXSharing(true);
+
+    // Use cached URL or upload now to get a fresh one
     let imageUrl = shareableUrl;
 
-    // Upload canvas to get a hosted URL if we don't have one yet
     if (!imageUrl) {
       try {
         const canvas = canvasRef.current;
@@ -989,19 +994,29 @@ export default function Home() {
         const data = await res.json();
         if (res.ok) {
           imageUrl = data.url;
-          setShareableUrl(data.url); // cache for later
+          setShareableUrl(data.url); // cache for textarea preview
+        } else {
+          setUploadError(data.error || "Upload failed");
         }
-      } catch (_) {
-        // If upload fails, still open tweet without image URL
+      } catch (err) {
+        setUploadError("Upload failed: " + err.message);
       }
     }
 
-    const caption = getShareCaption();
-    const tweetText = imageUrl ? `${caption}\n\n${imageUrl}` : caption;
+    // Build tweet text using local imageUrl variable (not React state which is async)
+    const base = (() => {
+      if (customShareText !== null) return customShareText;
+      if (mode === "frame") {
+        return `Officially locked in for #HHGoa2026! 🌴\nReady to ship, connect, and catch those Goa sunsets. Here's my frame - see you there!\n#FrameInGoa @HBuilderClub`;
+      }
+      return `Just minted my Builder ID for HH Goa 2026 - ${builderTitle} era activated 🌴\nReady to build and vibe with the community.\n#FrameInGoa @HBuilderClub`;
+    })();
+    const tweetText = imageUrl ? `${base}\n\n${imageUrl}` : base;
     const twitterUrl = "https://twitter.com/intent/tweet?text=" + encodeURIComponent(tweetText);
     window.open(twitterUrl, "_blank");
     setIsXSharing(false);
   };
+
 
   const handleCopy = () => {
     navigator.clipboard.writeText(getShareCaption()).then(() => {
