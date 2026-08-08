@@ -1282,6 +1282,10 @@ body::before {
   100% { background-position: 200% 0; }
 }
 
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
 .fade-in           { animation: fade-in-up 0.5s var(--ease-out) both; }
 .fade-in-delay-1   { animation-delay: 0.08s; }
 .fade-in-delay-2   { animation-delay: 0.16s; }

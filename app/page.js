@@ -138,6 +138,10 @@ export default function Home() {
   const [frameThickness, setFrameThickness] = useState(145);
   const [customShareText, setCustomShareText] = useState(null);
   const [frameBgColor, setFrameBgColor] = useState("transparent");
+  const [shareableUrl, setShareableUrl] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadError, setUploadError] = useState(null);
+  const [urlCopied, setUrlCopied] = useState(false);
 
   const canvasRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -980,6 +984,38 @@ export default function Home() {
     });
   };
 
+  const handleGenerateLink = async () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    setIsUploading(true);
+    setUploadError(null);
+    setShareableUrl(null);
+    try {
+      const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/png"));
+      const filename = `hhgoa-${mode}-${Date.now()}.png`;
+      const res = await fetch(`/api/upload?filename=${encodeURIComponent(filename)}`, {
+        method: "POST",
+        body: blob,
+        headers: { "content-type": "image/png" },
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Upload failed");
+      setShareableUrl(data.url);
+    } catch (err) {
+      setUploadError(err.message);
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleCopyUrl = () => {
+    if (!shareableUrl) return;
+    navigator.clipboard.writeText(shareableUrl).then(() => {
+      setUrlCopied(true);
+      setTimeout(() => setUrlCopied(false), 2000);
+    });
+  };
+
   // ─── Drag & drop handlers ───
   const handleDragOver = (e) => {
     e.preventDefault();
@@ -1358,6 +1394,83 @@ export default function Home() {
               >
                 {Icons.download} Download
               </button>
+            </div>
+
+            {/* ── Generate Shareable Link ── */}
+            <div style={{ marginTop: "20px" }}>
+              <div className="share-directly-label">🔗 Get Shareable Link</div>
+              <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.5)", margin: "4px 0 12px" }}>
+                Upload your card to the cloud and get a unique link anyone can open.
+              </p>
+              <button
+                id="btn-generate-link"
+                className="share-btn share-btn-download"
+                style={{ width: "100%", justifyContent: "center", background: "linear-gradient(135deg, #0C5C38, #1a8a56)", border: "1px solid rgba(245,216,10,0.4)" }}
+                onClick={handleGenerateLink}
+                disabled={!img || isUploading}
+                aria-label="Generate shareable link"
+              >
+                {isUploading ? (
+                  <span style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    <span style={{ width: "14px", height: "14px", border: "2px solid rgba(245,216,10,0.4)", borderTopColor: "#F5D80A", borderRadius: "50%", display: "inline-block", animation: "spin 0.8s linear infinite" }} />
+                    Uploading…
+                  </span>
+                ) : (
+                  <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>{Icons.copy} Generate Link</span>
+                )}
+              </button>
+
+              {uploadError && (
+                <p style={{ color: "#f87171", fontSize: "12px", marginTop: "8px" }}>⚠ {uploadError}</p>
+              )}
+
+              {shareableUrl && (
+                <div style={{ marginTop: "12px", display: "flex", gap: "8px", alignItems: "center" }}>
+                  <input
+                    id="shareable-url-input"
+                    type="text"
+                    readOnly
+                    value={shareableUrl}
+                    style={{
+                      flex: 1,
+                      background: "rgba(0,0,0,0.3)",
+                      border: "1px solid rgba(245,216,10,0.35)",
+                      borderRadius: "8px",
+                      padding: "8px 12px",
+                      color: "#F5D80A",
+                      fontSize: "12px",
+                      outline: "none",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                    }}
+                    onClick={(e) => e.target.select()}
+                    aria-label="Shareable image URL"
+                  />
+                  <button
+                    id="btn-copy-url"
+                    onClick={handleCopyUrl}
+                    title={urlCopied ? "Copied!" : "Copy link"}
+                    aria-label={urlCopied ? "Copied!" : "Copy link"}
+                    style={{
+                      background: urlCopied ? "#0C5C38" : "rgba(245,216,10,0.15)",
+                      border: "1px solid rgba(245,216,10,0.4)",
+                      borderRadius: "8px",
+                      padding: "8px",
+                      cursor: "pointer",
+                      color: "#F5D80A",
+                      width: "36px",
+                      height: "36px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      flexShrink: 0,
+                    }}
+                  >
+                    {urlCopied ? Icons.check : Icons.copy}
+                  </button>
+                </div>
+              )}
             </div>
           </div>
 
