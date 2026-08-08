@@ -142,6 +142,7 @@ export default function Home() {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState(null);
   const [urlCopied, setUrlCopied] = useState(false);
+  const [isXSharing, setIsXSharing] = useState(false);
 
   const canvasRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -970,11 +971,36 @@ export default function Home() {
     return `Just minted my Builder ID for HH Goa 2026 - ${builderTitle} era activated 🌴\nReady to build and vibe with the community.\n#FrameInGoa @HBuilderClub`;
   };
 
-  const handleShareX = () => {
-    const url =
-      "https://twitter.com/intent/tweet?text=" +
-      encodeURIComponent(getShareCaption());
-    window.open(url, "_blank");
+  const handleShareX = async () => {
+    setIsXSharing(true);
+    let imageUrl = shareableUrl;
+
+    // Upload canvas to get a hosted URL if we don't have one yet
+    if (!imageUrl) {
+      try {
+        const canvas = canvasRef.current;
+        const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/png"));
+        const filename = `hhgoa-${mode}-${Date.now()}.png`;
+        const res = await fetch(`/api/upload?filename=${encodeURIComponent(filename)}`, {
+          method: "POST",
+          body: blob,
+          headers: { "content-type": "image/png" },
+        });
+        const data = await res.json();
+        if (res.ok) {
+          imageUrl = data.url;
+          setShareableUrl(data.url); // cache for later
+        }
+      } catch (_) {
+        // If upload fails, still open tweet without image URL
+      }
+    }
+
+    const caption = getShareCaption();
+    const tweetText = imageUrl ? `${caption}\n\n${imageUrl}` : caption;
+    const twitterUrl = "https://twitter.com/intent/tweet?text=" + encodeURIComponent(tweetText);
+    window.open(twitterUrl, "_blank");
+    setIsXSharing(false);
   };
 
   const handleCopy = () => {
@@ -1381,9 +1407,16 @@ export default function Home() {
                 className="share-btn share-btn-x"
                 onClick={handleShareX}
                 aria-label="Share to X (Twitter)"
-                disabled={!img}
+                disabled={!img || isXSharing}
               >
-                {Icons.x} Share to X
+                {isXSharing ? (
+                  <span style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    <span style={{ width: "14px", height: "14px", border: "2px solid rgba(255,255,255,0.3)", borderTopColor: "#fff", borderRadius: "50%", display: "inline-block", animation: "spin 0.8s linear infinite" }} />
+                    Uploading…
+                  </span>
+                ) : (
+                  <>{Icons.x} Share to X</>
+                )}
               </button>
               <button
                 id="btn-download"
@@ -1484,9 +1517,16 @@ export default function Home() {
           className="share-btn share-btn-x"
           onClick={handleShareX}
           aria-label="Share to X"
-          disabled={!img}
+          disabled={!img || isXSharing}
         >
-          {Icons.x} Share to X
+          {isXSharing ? (
+            <span style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <span style={{ width: "14px", height: "14px", border: "2px solid rgba(255,255,255,0.3)", borderTopColor: "#fff", borderRadius: "50%", display: "inline-block", animation: "spin 0.8s linear infinite" }} />
+              Uploading…
+            </span>
+          ) : (
+            <>{Icons.x} Share to X</>
+          )}
         </button>
         <button
           className="share-btn share-btn-download"
