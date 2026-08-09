@@ -1,6 +1,6 @@
 # Hacker House Goa 2026 - ID Card Generator
 
-**Live Demo:** [https://hh-goa26-team-404error.vercel.app/](https://hh-goa26-team-404error.vercel.app/)
+**Live at:** [https://hh-goa26-team-404error.vercel.app/](https://hh-goa26-team-404error.vercel.app/)
 
 Welcome to the HH Goa 2026 ID Card Generator. This web application was built as Task 1 for the Hacker House Goa 2026 event. 
 
