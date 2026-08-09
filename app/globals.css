@@ -661,11 +661,11 @@ body::before {
   width: 100%;
 }
 
-/* Mobile order: Upload(1) → Preview(2) → Details(3) → Format+Share(4) */
+/* Mobile order: Upload(1) → Format+Share(2) → Details(3) → Preview(4) */
 .upload-col   { order: 1; }
-.panel-center { order: 2; }
+.panel-right  { order: 2; }
 .details-col  { order: 3; }
-.panel-right  { order: 4; }
+.panel-center { order: 4; }
 
 /* Center panel (preview) */
 .panel-center {
@@ -1083,19 +1083,7 @@ body::before {
    Sticky Bottom Action Bar (mobile only)
    ════════════════════════════════════════════════════════════ */
 .sticky-bar {
-  position: sticky;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 100;
-  background: rgba(11, 61, 46, 0.90);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-top: 1px solid var(--border-light);
-  padding: 12px var(--container-padding);
-  display: flex;
-  gap: 10px;
-  align-items: center;
+  display: none;
 }
 
 .sticky-bar .share-btn {
@@ -1416,11 +1404,27 @@ body::before {
     padding: 12px 0;
   }
 
+  .nav-hero-header {
+    padding: 4px 10px;
+  }
+
   .nav-hero-text {
-    font-size: clamp(16px, 5vw, 26px);
+    font-size: clamp(30px, 10vw, 50px);
+    gap: 14px;
+    transform: scale(0.65, 1.2);
     text-shadow:
       1px 1px 0 #0A4A2A,
       2px 2px 0 rgba(0,0,0,0.3);
+  }
+
+  .nav-hero-subtext {
+    font-size: clamp(18px, 6vw, 28px);
+    -webkit-text-stroke: 3px #F5D80A;
+    text-shadow:
+      -2px -2px 0 #F5D80A,
+       2px -2px 0 #F5D80A,
+      -2px  2px 0 #F5D80A,
+       2px  2px 0 #F5D80A;
   }
 
   .nav-hero-badge {
