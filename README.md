@@ -1,20 +1,18 @@
-# HH Goa 2026 ID Card Generator
+# Hacker House Goa 2026 - ID Card Generator
 
-This project is developed as Task 1 for the Hacker House Goa 2026 event. 
+**Live Demo:** [https://hh-goa26-team-404error.vercel.app/](https://hh-goa26-team-404error.vercel.app/)
 
-It is a web application that allows attendees to generate personalized digital ID cards and profile frames for the event. Users can easily input their details through a simple form, preview their customized design in real-time, and download the final image. The application also includes features to directly share the generated frames to social media platforms like X.
+Welcome to the HH Goa 2026 ID Card Generator. This web application was built as Task 1 for the Hacker House Goa 2026 event. 
 
-## Getting Started
+The goal of this project is to give attendees an easy way to generate their own personalized digital ID cards and profile frames. Users can quickly fill out their details, preview how their customized frame looks in real-time, and download the final image to share it online.
 
-To run this project locally on your machine, follow these steps:
+## Key Features
 
-1. Clone the repository and navigate to the project directory.
-2. Install the dependencies using:
-   ```bash
-   npm install
-   ```
-3. Start the development server:
-   ```bash
-   npm run dev
-   ```
-4. Open http://localhost:3000 in your browser to view the application.
+- **Simple Interface**: A straightforward form that makes it easy for attendees to input their information.
+- **Real-Time Previews**: You can see exactly what your ID card looks like as you type.
+- **Quick Downloads**: Export your final design with a single click.
+- **Easy Sharing**: Includes options to directly share your generated frame on social media platforms like X.
+- **Responsive Design**: Works well across desktop and mobile devices.
+
+
+*Developed for Hacker House Goa 2026 by Team 404Error.*
