@@ -647,6 +647,17 @@ body::before {
 }
 
 .panel-right {
+  display: contents;
+}
+
+.panel-format {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+.panel-share {
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -655,17 +666,15 @@ body::before {
 
 /* Keep panel-left as alias (not used but just in case) */
 .panel-left {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  width: 100%;
+  display: contents;
 }
 
-/* Mobile order: Upload(1) → Format+Share(2) → Details(3) → Preview(4) */
+/* Mobile order: Upload(1) → Format(2) → Preview(3) → Details(4) → Share(5) */
 .upload-col   { order: 1; }
-.panel-right  { order: 2; }
-.details-col  { order: 3; }
-.panel-center { order: 4; }
+.panel-format { order: 2; }
+.panel-center { order: 3; }
+.details-col  { order: 4; }
+.panel-share  { order: 5; }
 
 /* Center panel (preview) */
 .panel-center {
@@ -1297,7 +1306,8 @@ body::before {
     grid-template-areas:
       "preview  preview"
       "upload   details"
-      "right    right";
+      "format   format"
+      "share    share";
     gap: 8px;
     margin-bottom: 40px;
   }
@@ -1319,8 +1329,13 @@ body::before {
     align-self: start;
   }
 
-  .panel-right {
-    grid-area: right;
+  .panel-format {
+    grid-area: format;
+    order: unset;
+  }
+
+  .panel-share {
+    grid-area: share;
     order: unset;
   }
 
@@ -1354,34 +1369,29 @@ body::before {
   .builder-grid {
     display: grid;
     grid-template-columns: 300px 1fr 320px;
-    grid-template-rows: max-content 1fr;
     grid-template-areas:
-      "upload  preview right"
-      "details preview right";
+      "left preview right";
     gap: 8px;
     margin-bottom: 40px;
     align-items: start;
   }
 
-  .panel-center {
-    grid-area: preview;
-    order: unset;
-  }
-
-  .upload-col {
-    grid-area: upload;
-    order: unset;
-    align-self: start;
-  }
-
-  .details-col {
-    grid-area: details;
-    order: unset;
-    align-self: start;
+  .panel-left {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    grid-area: left;
   }
 
   .panel-right {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
     grid-area: right;
+  }
+
+  .panel-center {
+    grid-area: preview;
     order: unset;
   }
 
@@ -1402,6 +1412,12 @@ body::before {
 
   .navbar {
     padding: 12px 0;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .nav-right {
+    position: static;
   }
 
   .nav-hero-header {

@@ -1094,83 +1094,168 @@ export default function Home() {
       {/* ═══ BUILDER GRID ═══ */}
       {/*
         Mobile order (flex-direction: column):
-          1. panel-left  (Upload)
-          2. panel-center (Preview)  ← moved up from right-side
-          3. panel-left continues (Details)  ← handled by splitting into two separate .panel-left blocks
-          4. panel-right (Format + Share)
+          1. upload-col   (Upload)
+          2. panel-format (Pick Format)
+          3. panel-center (Live Preview)
+          4. details-col  (Your Details)
+          5. panel-share  (Share with X)
         
         Desktop grid uses grid-template-areas to reposition.
       */}
       <div className="builder-grid">
 
-        {/* ─── UPLOAD COL (Step 1) ─── */}
-        <div className="upload-col fade-in fade-in-delay-1">
-
-          {/* Step 1: Upload */}
-          <div className="glass-card panel-section" id="section-upload">
-            <div className="step-badge">
-              <span className="step-title">Upload Photo</span>
-            </div>
-            <p className="step-hint">JPG, PNG or HEIC. Max 10MB.</p>
-
-            {!img ? (
-              <div
-                className={`upload-zone ${isDragging ? "drag-over" : ""}`}
-                onClick={() => fileInputRef.current?.click()}
-                onDragOver={handleDragOver}
-                onDragEnter={handleDragOver}
-                onDragLeave={handleDragLeave}
-                onDrop={handleDrop}
-                role="button"
-                tabIndex={0}
-                aria-label="Upload photo — drag and drop or click to browse"
-                onKeyDown={(e) => e.key === "Enter" && fileInputRef.current?.click()}
-              >
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/png,image/jpeg,image/webp,image/heic"
-                  onChange={(e) => handleFile(e.target.files[0])}
-                  aria-hidden="true"
-                />
-                <div className="upload-icon-wrap">{Icons.upload}</div>
-                <p className="upload-text-main">
-                  Drag &amp; drop your photo
-                </p>
-                <p className="upload-text-hint">or click to browse</p>
+                <div className="panel-left">
+  {/* ─── UPLOAD COL (Step 1) ─── */}
+          <div className="upload-col fade-in fade-in-delay-1">
+  
+            {/* Step 1: Upload */}
+            <div className="glass-card panel-section" id="section-upload">
+              <div className="step-badge">
+                <span className="step-title">Upload Photo</span>
               </div>
-            ) : (
-              <div className="file-info">
-                {imgSrc && (
-                  <img
-                    src={imgSrc}
-                    alt="Uploaded"
-                    className="file-thumb"
-                  />
-                )}
-                <div className="file-meta">
-                  <div className="file-name">
-                    {fileName.length > 20
-                      ? fileName.slice(0, 18) + "…"
-                      : fileName}
-                  </div>
-                  <div className="file-size">{fileSize}</div>
-                </div>
-                <button
-                  className="file-remove-btn"
-                  onClick={removeFile}
-                  title="Remove photo"
-                  aria-label="Remove photo"
+              <p className="step-hint">JPG, PNG or HEIC. Max 10MB.</p>
+  
+              {!img ? (
+                <div
+                  className={`upload-zone ${isDragging ? "drag-over" : ""}`}
+                  onClick={() => fileInputRef.current?.click()}
+                  onDragOver={handleDragOver}
+                  onDragEnter={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                  onDrop={handleDrop}
+                  role="button"
+                  tabIndex={0}
+                  aria-label="Upload photo — drag and drop or click to browse"
+                  onKeyDown={(e) => e.key === "Enter" && fileInputRef.current?.click()}
                 >
-                  {Icons.trash}
-                </button>
-              </div>
-            )}
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/png,image/jpeg,image/webp,image/heic"
+                    onChange={(e) => handleFile(e.target.files[0])}
+                    aria-hidden="true"
+                  />
+                  <div className="upload-icon-wrap">{Icons.upload}</div>
+                  <p className="upload-text-main">
+                    Drag &amp; drop your photo
+                  </p>
+                  <p className="upload-text-hint">or click to browse</p>
+                </div>
+              ) : (
+                <div className="file-info">
+                  {imgSrc && (
+                    <img
+                      src={imgSrc}
+                      alt="Uploaded"
+                      className="file-thumb"
+                    />
+                  )}
+                  <div className="file-meta">
+                    <div className="file-name">
+                      {fileName.length > 20
+                        ? fileName.slice(0, 18) + "…"
+                        : fileName}
+                    </div>
+                    <div className="file-size">{fileSize}</div>
+                  </div>
+                  <button
+                    className="file-remove-btn"
+                    onClick={removeFile}
+                    title="Remove photo"
+                    aria-label="Remove photo"
+                  >
+                    {Icons.trash}
+                  </button>
+                </div>
+              )}
+            </div>
+            
           </div>
-          
-        </div>
+  
+            {/* ─── DETAILS COL (Step 3) ─── */}
+          <div className="details-col fade-in fade-in-delay-2">
+            <div className="glass-card panel-section" id="section-details" style={{ 
+              opacity: 1, 
+              pointerEvents: img ? 'auto' : 'none',
+              backgroundImage: "linear-gradient(rgba(12, 92, 56, 0.5), rgba(12, 92, 56, 0.8)), url('/bg-texture.png')",
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              backgroundRepeat: "no-repeat"
+            }}>
+              <div className="step-badge">
+                <span className="step-title">Your Details (ID Card)</span>
+              </div>
+              <p className="step-hint">
+                {img ? "Quick fields to personalize your card." : "Upload a photo first to unlock details."}
+              </p>
+  
+              <div className="field-group">
+                <label className="field-label" htmlFor="field-name">
+                  {Icons.user} Your Name
+                </label>
+                <input
+                  id="field-name"
+                  type="text"
+                  className="field-input"
+                  placeholder="e.g. Diptesh Roy"
+                  maxLength={28}
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  disabled={!img}
+                />
+              </div>
+  
+              <div className="field-group">
+                <label className="field-label" htmlFor="field-stack">
+                  {Icons.stack} Your Stack / Role
+                </label>
+                <input
+                  id="field-stack"
+                  type="text"
+                  className="field-input"
+                  placeholder="e.g. Full Stack Dev"
+                  maxLength={22}
+                  value={stack}
+                  onChange={(e) => setStack(e.target.value)}
+                  disabled={!img}
+                />
+              </div>
+  
+              <div className="field-group">
+                <label className="field-label" htmlFor="field-title">
+                  {Icons.title} Builder Title
+                </label>
+                <input
+                  id="field-title"
+                  type="text"
+                  className="field-input"
+                  placeholder="e.g. Ship Captain"
+                  maxLength={22}
+                  value={builderTitle}
+                  onChange={(e) => setBuilderTitle(e.target.value)}
+                  disabled={!img}
+                />
+              </div>
+              
+              {/* ─── Miniature Logo ─── */}
+              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '20px', marginTop: '12px', marginBottom: '4px' }}>
+                <div style={{ transform: 'scale(0.2)', transformOrigin: 'center center' }}>
+                  <div className="nav-hero-header" aria-label="Hacker House Goa 2026">
+                    <span className="nav-hero-text">
+                      <span>HACKER</span>
+                      <span>HOUSE</span>
+                    </span>
+                    <span className="nav-hero-subtext" aria-label="Goa">गोवा</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+  
+  
+                </div>
 
-        {/* ─── CENTER PANEL (Preview) — appears 2nd on mobile ─── */}
+{/* ─── CENTER PANEL (Preview) — appears 2nd on mobile ─── */}
         <div className="glass-card panel-center fade-in fade-in-delay-2" id="section-preview">
           <div className="preview-header">
             <span className="preview-title">Live Preview</span>
@@ -1218,339 +1303,264 @@ export default function Home() {
 
         </div>
 
-        {/* ─── DETAILS COL (Step 3) ─── */}
-        <div className="details-col fade-in fade-in-delay-2">
-          <div className="glass-card panel-section" id="section-details" style={{ 
-            opacity: 1, 
-            pointerEvents: img ? 'auto' : 'none',
-            backgroundImage: "linear-gradient(rgba(12, 92, 56, 0.5), rgba(12, 92, 56, 0.8)), url('/bg-texture.png')",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            backgroundRepeat: "no-repeat"
-          }}>
-            <div className="step-badge">
-              <span className="step-title">Your Details (ID Card)</span>
-            </div>
-            <p className="step-hint">
-              {img ? "Quick fields to personalize your card." : "Upload a photo first to unlock details."}
-            </p>
-
-            <div className="field-group">
-              <label className="field-label" htmlFor="field-name">
-                {Icons.user} Your Name
-              </label>
-              <input
-                id="field-name"
-                type="text"
-                className="field-input"
-                placeholder="e.g. Diptesh Roy"
-                maxLength={28}
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                disabled={!img}
-              />
-            </div>
-
-            <div className="field-group">
-              <label className="field-label" htmlFor="field-stack">
-                {Icons.stack} Your Stack / Role
-              </label>
-              <input
-                id="field-stack"
-                type="text"
-                className="field-input"
-                placeholder="e.g. Full Stack Dev"
-                maxLength={22}
-                value={stack}
-                onChange={(e) => setStack(e.target.value)}
-                disabled={!img}
-              />
-            </div>
-
-            <div className="field-group">
-              <label className="field-label" htmlFor="field-title">
-                {Icons.title} Builder Title
-              </label>
-              <input
-                id="field-title"
-                type="text"
-                className="field-input"
-                placeholder="e.g. Ship Captain"
-                maxLength={22}
-                value={builderTitle}
-                onChange={(e) => setBuilderTitle(e.target.value)}
-                disabled={!img}
-              />
-            </div>
-            
-            {/* ─── Miniature Logo ─── */}
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '20px', marginTop: '12px', marginBottom: '4px' }}>
-              <div style={{ transform: 'scale(0.2)', transformOrigin: 'center center' }}>
-                <div className="nav-hero-header" aria-label="Hacker House Goa 2026">
-                  <span className="nav-hero-text">
-                    <span>HACKER</span>
-                    <span>HOUSE</span>
+                <div className="panel-right">
+  {/* ─── FORMAT PANEL (Pick Format) ─── */}
+          <div className="panel-format fade-in fade-in-delay-3">
+  
+            {/* Step 4: Format Picker */}
+  
+            <div className="glass-card panel-section" id="section-format">
+              <div className="step-badge">
+                <span className="step-title">Pick Format</span>
+              </div>
+              <p className="step-hint">Choose your output style.</p>
+  
+              {/* Horizontal scroll chip row on mobile; 2-up grid on tablet+ */}
+              <div className="format-picker" role="group" aria-label="Pick output format">
+                <button
+                  id="format-frame"
+                  className={`format-option ${mode === "frame" ? "active" : ""}`}
+                  onClick={() => setMode("frame")}
+                  aria-pressed={mode === "frame"}
+                >
+                  {Icons.frame}
+                  <span className="format-option-label">
+                    PFP FRAME/OVERLAY
                   </span>
-                  <span className="nav-hero-subtext" aria-label="Goa">गोवा</span>
-                </div>
+                </button>
+                <button
+                  id="format-card"
+                  className={`format-option ${mode === "card" ? "active" : ""}`}
+                  onClick={() => setMode("card")}
+                  aria-pressed={mode === "card"}
+                >
+                  {Icons.card}
+                  <span className="format-option-label">Builder ID Card</span>
+                </button>
+              </div>
+              
+              {mode === "frame" && (
+                <>
+                  <div style={{ marginTop: '24px' }}>
+                    <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, color: 'var(--yellow)', marginBottom: '12px' }}>
+                      Adjust Frame Thickness
+                    </label>
+                    <input 
+                      type="range" 
+                      min="80" 
+                      max="210" 
+                      value={frameThickness} 
+                      onChange={(e) => setFrameThickness(e.target.value)} 
+                      style={{ width: '100%', accentColor: 'var(--yellow)' }} 
+                      aria-label="Adjust frame thickness"
+                    />
+                  </div>
+  
+                  <div style={{ marginTop: '24px' }}>
+                    <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, color: 'var(--yellow)', marginBottom: '12px' }}>
+                      Background Color
+                    </label>
+                    <div style={{ display: 'flex', gap: '10px' }}>
+                      {[
+                        { label: "Transparent", value: "transparent", color: "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\"><rect width=\"10\" height=\"10\" fill=\"%23ccc\"/><rect x=\"10\" width=\"10\" height=\"10\" fill=\"%23fff\"/><rect y=\"10\" width=\"10\" height=\"10\" fill=\"%23fff\"/><rect x=\"10\" y=\"10\" width=\"10\" height=\"10\" fill=\"%23ccc\"/></svg>')" },
+                        { label: "Green", value: "#0C5C38", color: "#0C5C38" },
+                        { label: "Black", value: "#000000", color: "#000000" },
+                        { label: "White", value: "#ffffff", color: "#ffffff" },
+                        { label: "Light Pink", value: "#FFC0CB", color: "#FFC0CB" }
+                      ].map(opt => (
+                        <button
+                          key={opt.value}
+                          onClick={() => setFrameBgColor(opt.value)}
+                          title={opt.label}
+                          aria-label={`Set background to ${opt.label}`}
+                          style={{
+                            width: '36px',
+                            height: '36px',
+                            borderRadius: '50%',
+                            background: opt.color,
+                            border: frameBgColor === opt.value ? '3px solid var(--yellow)' : '2px solid rgba(255,255,255,0.2)',
+                            cursor: 'pointer',
+                            padding: 0
+                          }}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+  
+          </div>
+  
+            {/* ─── SHARE PANEL (Share with X) ─── */}
+          <div className="panel-share fade-in fade-in-delay-3">
+  
+            {/* Step 5: Share */}
+            <div className="glass-card panel-section" id="section-share">
+              <div className="share-title">Your Share to X (Pre-Filled)</div>
+              <div className="tweet-box" role="region" aria-label="Pre-filled post text">
+                <textarea
+                  className="tweet-text"
+                  style={{
+                    width: "100%",
+                    background: "transparent",
+                    border: "none",
+                    outline: "none",
+                    resize: "vertical",
+                    minHeight: "100px",
+                    fontFamily: "inherit",
+                    whiteSpace: "pre-wrap",
+                    paddingRight: "64px"
+                  }}
+                  value={getShareCaption()}
+                  onChange={(e) => setCustomShareText(e.target.value)}
+                />
+                <button
+                  className="copy-btn"
+                  onClick={handleCopy}
+                  aria-label={copied ? "Copied!" : "Copy post text"}
+                  title="Copy post text"
+                >
+                  {copied ? Icons.check : Icons.copy}
+                </button>
+              </div>
+  
+              <div className="share-directly-label">Share Directly</div>
+              <div className="share-btns">
+                <button
+                  id="btn-share-x"
+                  className="share-btn share-btn-x"
+                  onClick={handleShareX}
+                  aria-label="Share to X (Twitter)"
+                  disabled={!img || isXSharing}
+                >
+                  {isXSharing ? (
+                    <span style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                      <span style={{ width: "14px", height: "14px", border: "2px solid rgba(255,255,255,0.3)", borderTopColor: "#fff", borderRadius: "50%", display: "inline-block", animation: "spin 0.8s linear infinite" }} />
+                      Uploading…
+                    </span>
+                  ) : (
+                    <>{Icons.x} Share to X</>
+                  )}
+                </button>
+                <button
+                  id="btn-download"
+                  className="share-btn share-btn-download"
+                  onClick={handleDownload}
+                  aria-label="Download image"
+                  disabled={!img}
+                >
+                  {Icons.download} Download
+                </button>
+              </div>
+  
+              {/* ── Generate Shareable Link ── */}
+              <div style={{ marginTop: "20px" }}>
+                <div className="share-directly-label">🔗 Get Shareable Link</div>
+                <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.5)", margin: "4px 0 12px" }}>
+                  Upload your card to the cloud and get a unique link anyone can open.
+                </p>
+                <button
+                  id="btn-generate-link"
+                  className="share-btn share-btn-download"
+                  style={{ width: "100%", justifyContent: "center", background: "linear-gradient(135deg, #0C5C38, #1a8a56)", border: "1px solid rgba(245,216,10,0.4)" }}
+                  onClick={handleGenerateLink}
+                  disabled={!img || isUploading}
+                  aria-label="Generate shareable link"
+                >
+                  {isUploading ? (
+                    <span style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                      <span style={{ width: "14px", height: "14px", border: "2px solid rgba(245,216,10,0.4)", borderTopColor: "#F5D80A", borderRadius: "50%", display: "inline-block", animation: "spin 0.8s linear infinite" }} />
+                      Uploading…
+                    </span>
+                  ) : (
+                    <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>{Icons.copy} Generate Link</span>
+                  )}
+                </button>
+  
+                {uploadError && (
+                  <p style={{ color: "#f87171", fontSize: "12px", marginTop: "8px" }}>⚠ {uploadError}</p>
+                )}
+  
+                {shareableUrl && (
+                  <div style={{ marginTop: "12px", display: "flex", gap: "8px", alignItems: "center" }}>
+                    <input
+                      id="shareable-url-input"
+                      type="text"
+                      readOnly
+                      value={shareableUrl}
+                      style={{
+                        flex: 1,
+                        background: "rgba(0,0,0,0.3)",
+                        border: "1px solid rgba(245,216,10,0.35)",
+                        borderRadius: "8px",
+                        padding: "8px 12px",
+                        color: "#F5D80A",
+                        fontSize: "12px",
+                        outline: "none",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                      }}
+                      onClick={(e) => e.target.select()}
+                      aria-label="Shareable image URL"
+                    />
+                    <button
+                      id="btn-copy-url"
+                      onClick={handleCopyUrl}
+                      title={urlCopied ? "Copied!" : "Copy link"}
+                      aria-label={urlCopied ? "Copied!" : "Copy link"}
+                      style={{
+                        background: urlCopied ? "#0C5C38" : "rgba(245,216,10,0.15)",
+                        border: "1px solid rgba(245,216,10,0.4)",
+                        borderRadius: "8px",
+                        padding: "8px",
+                        cursor: "pointer",
+                        color: "#F5D80A",
+                        width: "36px",
+                        height: "36px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        flexShrink: 0,
+                      }}
+                    >
+                      {urlCopied ? Icons.check : Icons.copy}
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </div>
+  
         </div>
-
-
-        {/* ─── RIGHT PANEL (Format + Share) ─── */}
-        <div className="panel-right fade-in fade-in-delay-3">
-
-          {/* Step 4: Format Picker */}
-
-          <div className="glass-card panel-section" id="section-format">
-            <div className="step-badge">
-              <span className="step-title">Pick Format</span>
-            </div>
-            <p className="step-hint">Choose your output style.</p>
-
-            {/* Horizontal scroll chip row on mobile; 2-up grid on tablet+ */}
-            <div className="format-picker" role="group" aria-label="Pick output format">
-              <button
-                id="format-frame"
-                className={`format-option ${mode === "frame" ? "active" : ""}`}
-                onClick={() => setMode("frame")}
-                aria-pressed={mode === "frame"}
-              >
-                {Icons.frame}
-                <span className="format-option-label">
-                  PFP FRAME/OVERLAY
-                </span>
-              </button>
-              <button
-                id="format-card"
-                className={`format-option ${mode === "card" ? "active" : ""}`}
-                onClick={() => setMode("card")}
-                aria-pressed={mode === "card"}
-              >
-                {Icons.card}
-                <span className="format-option-label">Builder ID Card</span>
-              </button>
-            </div>
-            
-            {mode === "frame" && (
-              <>
-                <div style={{ marginTop: '24px' }}>
-                  <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, color: 'var(--yellow)', marginBottom: '12px' }}>
-                    Adjust Frame Thickness
-                  </label>
-                  <input 
-                    type="range" 
-                    min="80" 
-                    max="210" 
-                    value={frameThickness} 
-                    onChange={(e) => setFrameThickness(e.target.value)} 
-                    style={{ width: '100%', accentColor: 'var(--yellow)' }} 
-                    aria-label="Adjust frame thickness"
-                  />
-                </div>
-
-                <div style={{ marginTop: '24px' }}>
-                  <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, color: 'var(--yellow)', marginBottom: '12px' }}>
-                    Background Color
-                  </label>
-                  <div style={{ display: 'flex', gap: '10px' }}>
-                    {[
-                      { label: "Transparent", value: "transparent", color: "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\"><rect width=\"10\" height=\"10\" fill=\"%23ccc\"/><rect x=\"10\" width=\"10\" height=\"10\" fill=\"%23fff\"/><rect y=\"10\" width=\"10\" height=\"10\" fill=\"%23fff\"/><rect x=\"10\" y=\"10\" width=\"10\" height=\"10\" fill=\"%23ccc\"/></svg>')" },
-                      { label: "Green", value: "#0C5C38", color: "#0C5C38" },
-                      { label: "Black", value: "#000000", color: "#000000" },
-                      { label: "White", value: "#ffffff", color: "#ffffff" },
-                      { label: "Light Pink", value: "#FFC0CB", color: "#FFC0CB" }
-                    ].map(opt => (
-                      <button
-                        key={opt.value}
-                        onClick={() => setFrameBgColor(opt.value)}
-                        title={opt.label}
-                        aria-label={`Set background to ${opt.label}`}
-                        style={{
-                          width: '36px',
-                          height: '36px',
-                          borderRadius: '50%',
-                          background: opt.color,
-                          border: frameBgColor === opt.value ? '3px solid var(--yellow)' : '2px solid rgba(255,255,255,0.2)',
-                          cursor: 'pointer',
-                          padding: 0
-                        }}
-                      />
-                    ))}
-                  </div>
-                </div>
-              </>
+  
+        {/* ─── STICKY BOTTOM BAR (mobile only — hidden at 768px+) ─── */}
+        <div className="sticky-bar" aria-label="Quick action bar">
+          <button
+            className="share-btn share-btn-x"
+            onClick={handleShareX}
+            aria-label="Share to X"
+            disabled={!img || isXSharing}
+          >
+            {isXSharing ? (
+              <span style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <span style={{ width: "14px", height: "14px", border: "2px solid rgba(255,255,255,0.3)", borderTopColor: "#fff", borderRadius: "50%", display: "inline-block", animation: "spin 0.8s linear infinite" }} />
+                Uploading…
+              </span>
+            ) : (
+              <>{Icons.x} Share to X</>
             )}
-          </div>
-
-          {/* Step 5: Share */}
-          <div className="glass-card panel-section" id="section-share">
-            <div className="share-title">Your Share to X (Pre-Filled)</div>
-            <div className="tweet-box" role="region" aria-label="Pre-filled post text">
-              <textarea
-                className="tweet-text"
-                style={{
-                  width: "100%",
-                  background: "transparent",
-                  border: "none",
-                  outline: "none",
-                  resize: "vertical",
-                  minHeight: "100px",
-                  fontFamily: "inherit",
-                  whiteSpace: "pre-wrap",
-                  paddingRight: "64px"
-                }}
-                value={getShareCaption()}
-                onChange={(e) => setCustomShareText(e.target.value)}
-              />
-              <button
-                className="copy-btn"
-                onClick={handleCopy}
-                aria-label={copied ? "Copied!" : "Copy post text"}
-                title="Copy post text"
-              >
-                {copied ? Icons.check : Icons.copy}
-              </button>
-            </div>
-
-            <div className="share-directly-label">Share Directly</div>
-            <div className="share-btns">
-              <button
-                id="btn-share-x"
-                className="share-btn share-btn-x"
-                onClick={handleShareX}
-                aria-label="Share to X (Twitter)"
-                disabled={!img || isXSharing}
-              >
-                {isXSharing ? (
-                  <span style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                    <span style={{ width: "14px", height: "14px", border: "2px solid rgba(255,255,255,0.3)", borderTopColor: "#fff", borderRadius: "50%", display: "inline-block", animation: "spin 0.8s linear infinite" }} />
-                    Uploading…
-                  </span>
-                ) : (
-                  <>{Icons.x} Share to X</>
-                )}
-              </button>
-              <button
-                id="btn-download"
-                className="share-btn share-btn-download"
-                onClick={handleDownload}
-                aria-label="Download image"
-                disabled={!img}
-              >
-                {Icons.download} Download
-              </button>
-            </div>
-
-            {/* ── Generate Shareable Link ── */}
-            <div style={{ marginTop: "20px" }}>
-              <div className="share-directly-label">🔗 Get Shareable Link</div>
-              <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.5)", margin: "4px 0 12px" }}>
-                Upload your card to the cloud and get a unique link anyone can open.
-              </p>
-              <button
-                id="btn-generate-link"
-                className="share-btn share-btn-download"
-                style={{ width: "100%", justifyContent: "center", background: "linear-gradient(135deg, #0C5C38, #1a8a56)", border: "1px solid rgba(245,216,10,0.4)" }}
-                onClick={handleGenerateLink}
-                disabled={!img || isUploading}
-                aria-label="Generate shareable link"
-              >
-                {isUploading ? (
-                  <span style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                    <span style={{ width: "14px", height: "14px", border: "2px solid rgba(245,216,10,0.4)", borderTopColor: "#F5D80A", borderRadius: "50%", display: "inline-block", animation: "spin 0.8s linear infinite" }} />
-                    Uploading…
-                  </span>
-                ) : (
-                  <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>{Icons.copy} Generate Link</span>
-                )}
-              </button>
-
-              {uploadError && (
-                <p style={{ color: "#f87171", fontSize: "12px", marginTop: "8px" }}>⚠ {uploadError}</p>
-              )}
-
-              {shareableUrl && (
-                <div style={{ marginTop: "12px", display: "flex", gap: "8px", alignItems: "center" }}>
-                  <input
-                    id="shareable-url-input"
-                    type="text"
-                    readOnly
-                    value={shareableUrl}
-                    style={{
-                      flex: 1,
-                      background: "rgba(0,0,0,0.3)",
-                      border: "1px solid rgba(245,216,10,0.35)",
-                      borderRadius: "8px",
-                      padding: "8px 12px",
-                      color: "#F5D80A",
-                      fontSize: "12px",
-                      outline: "none",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      whiteSpace: "nowrap",
-                    }}
-                    onClick={(e) => e.target.select()}
-                    aria-label="Shareable image URL"
-                  />
-                  <button
-                    id="btn-copy-url"
-                    onClick={handleCopyUrl}
-                    title={urlCopied ? "Copied!" : "Copy link"}
-                    aria-label={urlCopied ? "Copied!" : "Copy link"}
-                    style={{
-                      background: urlCopied ? "#0C5C38" : "rgba(245,216,10,0.15)",
-                      border: "1px solid rgba(245,216,10,0.4)",
-                      borderRadius: "8px",
-                      padding: "8px",
-                      cursor: "pointer",
-                      color: "#F5D80A",
-                      width: "36px",
-                      height: "36px",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      flexShrink: 0,
-                    }}
-                  >
-                    {urlCopied ? Icons.check : Icons.copy}
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-
+          </button>
+          <button
+            className="share-btn share-btn-download"
+            onClick={handleDownload}
+            aria-label="Download image"
+            disabled={!img}
+          >
+            {Icons.download} Download
+          </button>
         </div>
-
-      </div>
-
-      {/* ─── STICKY BOTTOM BAR (mobile only — hidden at 768px+) ─── */}
-      <div className="sticky-bar" aria-label="Quick action bar">
-        <button
-          className="share-btn share-btn-x"
-          onClick={handleShareX}
-          aria-label="Share to X"
-          disabled={!img || isXSharing}
-        >
-          {isXSharing ? (
-            <span style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-              <span style={{ width: "14px", height: "14px", border: "2px solid rgba(255,255,255,0.3)", borderTopColor: "#fff", borderRadius: "50%", display: "inline-block", animation: "spin 0.8s linear infinite" }} />
-              Uploading…
-            </span>
-          ) : (
-            <>{Icons.x} Share to X</>
-          )}
-        </button>
-        <button
-          className="share-btn share-btn-download"
-          onClick={handleDownload}
-          aria-label="Download image"
-          disabled={!img}
-        >
-          {Icons.download} Download
-        </button>
       </div>
 
       {/* ═══ FOOTER ═══ */}
